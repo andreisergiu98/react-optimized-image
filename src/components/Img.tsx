@@ -20,6 +20,10 @@ interface ImgInnerProps {
   };
 }
 
+const getBlankImage = () => {
+  return 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+};
+
 const buildSrcSet = (densities: Record<number, ImgSrc>): string => {
   return ((Object.keys(densities) as unknown) as number[])
     .map((density) => {
@@ -58,6 +62,10 @@ const buildSources = (
       media = `(min-width: ${breakpoints[i - 1] + 1}px)`;
     } else {
       media = `(min-width: ${breakpoints[i - 1] + 1}px) and (max-width: ${breakpoints[i]}px)`;
+    }
+
+    if(size === 0) {
+      return <source key={`${imageType}/${size}`} src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" media={media}/>;
     }
 
     return <source key={`${imageType}/${size}`} type={imageType} srcSet={buildSrcSet(densities)} media={media} />;
