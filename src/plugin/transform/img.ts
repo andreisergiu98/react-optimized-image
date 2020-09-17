@@ -28,8 +28,8 @@ const buildConfig = (types: Babel['types'], path: NodePath<JSXElement>): ImageCo
     config = { ...config, ...globalImageConfig.types[type] };
   }
 
-  // check boolean attributes: webp, inline, url, original, addWidthAndHeight
-  ['webp', 'inline', 'url', 'original', 'addWidthAndHeight'].forEach((attr) => {
+  // check boolean attributes: webp, inline, url, original, withDimensions
+  ['webp', 'inline', 'url', 'original', 'withDimensions'].forEach((attr) => {
     const value = getBooleanAttribute(path, attr);
 
     if (typeof value !== 'undefined') {

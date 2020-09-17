@@ -9,7 +9,7 @@ export interface ImgProps
   inline?: boolean;
   url?: boolean;
   original?: boolean;
-  addWidthAndHeight?: boolean;
+  withDimensions?: boolean;
   sizes?: number[];
   densities?: number[];
   breakpoints?: number[];
@@ -110,7 +110,7 @@ const Img = ({
   sizes,
   densities,
   breakpoints,
-  addWidthAndHeight,
+  withDimensions,
   style,
   ...props
 }: ImgProps): ReactElement | null => {
@@ -127,7 +127,7 @@ const Img = ({
   const fallbackImage = findFallbackImage(src, rawSrc);
 
   let dimensions;
-  if (addWidthAndHeight === true) {
+  if (withDimensions === true) {
     dimensions = {
       width: fallbackImage.width,
       height: fallbackImage.height,
