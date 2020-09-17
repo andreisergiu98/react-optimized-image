@@ -21,10 +21,6 @@ interface ImgInnerProps {
   };
 }
 
-const getBlankImage = () => {
-  return 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
-};
-
 const buildSrcSet = (densities: Record<number, ImgSrc>): string => {
   return ((Object.keys(densities) as unknown) as number[])
     .map((density) => {
@@ -42,16 +38,18 @@ const getImageType = (densities: Record<number, ImgSrc>): string => {
   return densities[keys[keys.length - 1]].format;
 };
 
+const getBlankImage = () => {
+  return 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+};
+
 const buildSources = (
+  webp: boolean,
   type: Record<number | string, Record<number, ImgSrc>>,
   sizes: Array<number | string>,
   breakpoints?: number[],
 ): ReactElement[] => {
   return sizes.map((size, i) => {
-    const densities = type[size];
-    const imageType = `image/${getImageType(densities)}`;
     let media;
-
     if (size === 'original' || sizes.length === 0 || !breakpoints || i > breakpoints.length) {
       // only one size
       media = undefined;
@@ -65,9 +63,13 @@ const buildSources = (
       media = `(min-width: ${breakpoints[i - 1] + 1}px) and (max-width: ${breakpoints[i]}px)`;
     }
 
-    if(size === 0) {
-      return <source key={`${imageType}/${size}`} src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" media={media}/>;
+    if (size === 0) {
+      if (webp) return <React.Fragment key="blank-non-fallback" />;
+      return <source key="blank" src={getBlankImage()} media={media} />;
     }
+
+    const densities = type[size];
+    const imageType = `image/${getImageType(densities)}`;
 
     return <source key={`${imageType}/${size}`} type={imageType} srcSet={buildSrcSet(densities)} media={media} />;
   });
@@ -145,11 +147,13 @@ const Img = ({
     <picture>
       {rawSrc.webp &&
         buildSources(
+          true,
           rawSrc.webp,
           sizes || ((Object.keys(rawSrc.webp) as unknown) as (number | string)[]),
           breakpoints || sizes,
         )}
       {buildSources(
+        false,
         rawSrc.fallback,
         sizes || ((Object.keys(rawSrc.fallback) as unknown) as (number | string)[]),
         breakpoints || sizes,
