@@ -64,14 +64,15 @@ const buildSources = (
     }
 
     if (size === 0) {
-      if (webp) return <React.Fragment key="blank-non-fallback" />;
-      return <source key="blank" src={getBlankImage()} media={media} />;
+      if (webp) return <React.Fragment key={`fragment/${media}`} />;
+      return <source key={`blank/${media}`} srcSet={getBlankImage()} media={media} />;
     }
 
     const densities = type[size];
     const imageType = `image/${getImageType(densities)}`;
+    const key = `${imageType}/${media || 'original'}`;
 
-    return <source key={`${imageType}/${size}`} type={imageType} srcSet={buildSrcSet(densities)} media={media} />;
+    return <source key={key} type={imageType} srcSet={buildSrcSet(densities)} media={media} />;
   });
 };
 
